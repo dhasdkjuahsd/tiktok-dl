@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>محمل تيك توك الاحترافي</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f9f9f9; }
+        .box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; width: 80%; max-width: 500px; }
+        input { padding: 12px; width: 80%; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px; }
+        button { padding: 12px 25px; background: #25d366; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        #result { margin-top: 20px; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>محمل فيديوهات تيك توك</h2>
+    <input type="text" id="videoUrl" placeholder="ضع رابط الفيديو هنا...">
+    <button onclick="downloadVideo()">تحميل المقطع</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    async function downloadVideo() {
+        const url = document.getElementById('videoUrl').value;
+        const resultDiv = document.getElementById('result');
+        
+        if (!url) {
+            alert("يرجى وضع رابط الفيديو");
+            return;
+        }
+
+        resultDiv.innerHTML = "جاري المعالجة عبر السيرفر الآمن...";
+        
+        try {
+            // الطلب الآن يذهب للسيرفر الخاص بك (مجلد الـ api) وليس للـ RapidAPI مباشرة
+            const response = await fetch(`/api/download?url=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            
+            // استخراج الرابط من المسار الصحيح بناءً على الـ JSON الذي أرسلته
+            const videoLink = data.video && data.video[0] ? data.video[0] : null;
+
+            if (videoLink) {
+                resultDiv.innerHTML = "تم العثور على المقطع! جارٍ التحميل...";
+                // توجيه المتصفح لتحميل الفيديو مباشرة
+                window.location.href = videoLink; 
+            } else {
+                resultDiv.innerHTML = "حدث خطأ: لم يتم العثور على رابط الفيديو.";
+                console.log("البيانات المستلمة:", data);
+            }
+        } catch (err) {
+            resultDiv.innerHTML = "خطأ في الاتصال بالسيرفر. تأكد من رفع الملفات بشكل صحيح.";
+        }
+    }
+</script>
+</body>
+</html> 
