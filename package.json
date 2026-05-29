@@ -1,0 +1,8 @@
+{
+  "name": "tiktokdownloader",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
